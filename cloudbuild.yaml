@@ -5,7 +5,7 @@ steps:
   entrypoint: 'bash'
   args: [
    '-c',
-   'docker pull gcr.io/$PROJECT_ID/$APP_NAME:latest || exit 0'
+   'docker pull gcr.io/$PROJECT_ID/{APP_NAME}:latest || exit 0'
   ]
 
 #step 2
@@ -13,9 +13,9 @@ steps:
   args: [
    'build',
    '-t',
-   'gcr.io/$PROJECT_ID/$APP_NAME:$BRANCH_NAME-$COMMIT_SHA',
+   'gcr.io/$PROJECT_ID/{APP_NAME}:$BRANCH_NAME-$COMMIT_SHA',
    '-t',
-   'gcr.io/$PROJECT_ID/$APP_NAME:latest',
+   'gcr.io/$PROJECT_ID/{APP_NAME}:latest',
    '.'
   ]
 
@@ -23,8 +23,8 @@ steps:
 - name: 'gcr.io/cloud-builders/kubectl'
   args: ['apply', '-f', 'k8s/']
   env:
-  - 'CLOUDSDK_COMPUTE_ZONE=$CLUSTER_ZONE'
-  - 'CLOUDSDK_CONTAINER_CLUSTER=$CLUSTER_NAME'
+  - 'CLOUDSDK_COMPUTE_ZONE={CLUSTER_ZONE}'
+  - 'CLOUDSDK_CONTAINER_CLUSTER={CLUSTER_NAME}'
 
 #step 4
 - name: 'gcr.io/cloud-builders/kubectl'
@@ -32,15 +32,15 @@ steps:
    'set',
    'image',
    'deployment',
-   'nginx-hello',
-   'nginx-hello=gcr.io/$PROJECT_ID/$APP_NAME:$BRANCH_NAME-$COMMIT_SHA'
+   '{APP_NAME}',
+   '{APP_NAME}=gcr.io/$PROJECT_ID/{APP_NAME}:$BRANCH_NAME-$COMMIT_SHA'
   ]
   env:
-  - 'CLOUDSDK_COMPUTE_ZONE=$CLUSTER_ZONE'
-  - 'CLOUDSDK_CONTAINER_CLUSTER=$CLUSTER_NAME'
+  - 'CLOUDSDK_COMPUTE_ZONE={CLUSTER_ZONE}'
+  - 'CLOUDSDK_CONTAINER_CLUSTER={CLUSTER_NAME}'
 
 # push images to Google Container Registry with tags
 images: [
-   'gcr.io/$PROJECT_ID/$APP_NAME:$BRANCH_NAME-$COMMIT_SHA',
-   'gcr.io/$PROJECT_ID/$APP_NAME:latest'
+   'gcr.io/$PROJECT_ID/{APP_NAME}:$BRANCH_NAME-$COMMIT_SHA',
+   'gcr.io/$PROJECT_ID/{APP_NAME}:latest'
   ]

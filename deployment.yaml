@@ -16,7 +16,7 @@ spec:
         run: "nginx-hello"
     spec:
       containers:
-      - image: "gcr.io/$PROJECT_ID/nginx-hello:latest"
+      - image: "gcr.io/{PROJECT_ID}/nginx-hello:latest"
         name: "nginx-hello"
         ports:
         - containerPort: 80

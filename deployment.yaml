@@ -1,0 +1,55 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    run: "nginx-hello"
+  name: "nginx-hello"
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      run: "nginx-hello"
+  template:
+    metadata:
+      labels:
+        run: "nginx-hello"
+    spec:
+      containers:
+      - image: "gcr.io/$PROJECT_ID/nginx-hello:latest"
+        name: "nginx-hello"
+        ports:
+        - containerPort: 80
+---
+apiVersion: "autoscaling/v2beta1"
+kind: "HorizontalPodAutoscaler"
+metadata:
+  name: "nginx-hello-hpa-rsxa"
+  namespace: "default"
+  labels:
+    app: "nginx-hello"
+spec:
+  scaleTargetRef:
+    kind: "Deployment"
+    name: "nginx-hello"
+    apiVersion: "apps/v1"
+  minReplicas: 1
+  maxReplicas: 5
+  metrics:
+  - type: "Resource"
+    resource:
+      name: "cpu"
+      targetAverageUtilization: 50
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: "nginx-hello"
+spec:
+  selector:
+     run: "nginx-hello"
+  ports:
+  - protocol: TCP
+    port: 80
+    targetPort: 80
+  type: LoadBalancer

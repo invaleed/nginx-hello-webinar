@@ -39,7 +39,7 @@ spec:
   - type: "Resource"
     resource:
       name: "cpu"
-      targetAverageUtilization: 50
+      targetAverageUtilization: 20
 ---
 kind: Service
 apiVersion: v1
